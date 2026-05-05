@@ -1,38 +1,22 @@
-from src_antigo.models.pedido import Pedido
-from src_antigo.models.desconto import  DescontoVip, DescontoNormal, DescontoPremium
-from src_antigo.repositories.pedido_repository import PedidoRepository
-from src_antigo.services.pedido_service import PedidoService
-from src_antigo.controllers.pedido_controller import PedidoController
-from src_antigo.database.connection import DatabaseConnection
+from src.app.frameworks.database.memory_database import Memorydatabase
+from src.app.adapter.repositories.memory_pedido_repository import MemoryPedidoRepository
+from src.app.use_cases.criar_pedido import CriarPedido
+from src.app.adapter.controllers.pedido_controller import PedidoController
 
-"""
+def main() -> None:
+    database = Memorydatabase()
+    pedido_gateway = MemoryPedidoRepository(database)
+    criar_pedido_use_case = CriarPedido(pedido_gateway) 
+    controller = PedidoController(criar_pedido_use_case)
+
+    pedido1 = controller.criar_pedido("Cliente A", 100.0, "normal")
+    pedido2 = controller.criar_pedido("Cliente B", 100.0, "vip")
+    pedido3 = controller.criar_pedido("Cliente C", 100.0, "premium")
+
+    print("Pedidos Criados:")
+    print(pedido1.cliente, pedido1.valor_original, pedido1.valor_final)
+    print(pedido2.cliente, pedido2.valor_original, pedido2.valor_final)
+    print(pedido3.cliente, pedido3.valor_original, pedido3.valor_final)
+
 if __name__ == "__main__":
-    pedido = Pedido("Leonardo", DescontoVip())
-
-    valor_final = pedido.valor_final(100)
-    print(f"cliente: {pedido.cliente}")
-    print(f"Valor final do pedido: {valor_final}")
-    """
-
-if __name__ == "__main__":
-    database = DatabaseConnection()
-    
-    repo = PedidoRepository(database)
-    
-    pedido1 = Pedido("Leonardo", DescontoNormal())
-    pedido1.valor_original = 100.0
-    pedido2 = Pedido("Maria", DescontoVip())
-    pedido2.valor_original = 200.0
-    pedido3 = Pedido("João", DescontoPremium())
-    pedido3.valor_original = 300.0
-
-
-    repo.adicionar_pedido(pedido1)
-    repo.adicionar_pedido(pedido2)
-    repo.adicionar_pedido(pedido3)
-
-    pedidos = repo.listar_pedidos()
-
-    for pedido in pedidos:
-        print(f"Cliente: {pedido.cliente}")
-        print(f"Valor Final: {pedido.valor_final(pedido.valor_original)}")
+    main()
