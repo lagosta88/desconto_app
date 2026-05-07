@@ -10,5 +10,5 @@ class MemoryPedidoRepository(IPedidoGateway):
     def salvar(self, pedido: Pedido) -> None:
         self.database.pedidos.append(pedido)
 
-    def listar_pedidos(self):
-        return self.database.pedidos
+    def listar(self) -> list[Pedido]:
+        return self.database.pedidos_original
