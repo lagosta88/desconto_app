@@ -1,0 +1,28 @@
+from src.app.presenters.pedido_presenter import PedidoPresenter
+from src.app.frameworks.database.memory_database import MemoryDatabase
+from src.app.adapter.repositories.memory_pedido_repository import MemoryPedidoRepository
+from src.app.use_cases.criar_pedido import CriarPedido
+from src.app.adapter.controllers.pedido_controller import PedidoController
+
+def main() -> None:
+    database = MemoryDatabase()
+    presenter = PedidoPresenter()   
+    pedido_gateway = MemoryPedidoRepository(database)
+    criar_pedido_use_case = CriarPedido(pedido_gateway) 
+    controller = PedidoController(criar_pedido_use_case = criar_pedido_use_case,presenter = presenter)
+
+    pedido1 = controller.criar_pedido("Cliente A", 100.0, "normal")
+    pedido2 = controller.criar_pedido("Cliente B", 200.0, "vip")
+    pedido3 = controller.criar_pedido("Cliente C", 300.0, "premium")
+
+    print("Pedidos Criados:")
+    print(pedido1)
+    print(pedido2)
+    print(pedido3)
+
+    print("\nLista de Pedidos:")
+    for pedido in controller.listar_pedidos():
+        print(pedido)
+
+if __name__ == "__main__":
+    main()
